@@ -21,6 +21,19 @@ export const searchProducts = async (search = '', page = 0, limit = 10) => {
     }
 
     const data = await response.json();
+
+    // The API doesn't filter by search server-side, so filter client-side
+    if (!Array.isArray(data)) {
+      return [];
+    }
+
+    if (search && search.trim() !== '') {
+      const searchLower = search.toLowerCase();
+      return data.filter(product =>
+        product.title && product.title.toLowerCase().includes(searchLower)
+      );
+    }
+
     return data;
   } catch (error) {
     console.error('Error fetching products:', error);
